@@ -1,10 +1,11 @@
 
 "use client";
 import { useState,useEffect } from "react";
+import { pageStore, widthState } from "../store";
 import Toolbar from "./toolbar"; 
 import useStore, {shapeState, propState, itemState, svgState, indexState} from "../store";
 
-export default function Canvas() {
+export default function Canvas({width,height}:{width:string,height:string}) {
   const {items,setItems} = useStore() as itemState;
     const {shape,setShape} = useStore() as shapeState;
     const {svg , setSvg} = useStore() as svgState;
@@ -91,17 +92,21 @@ export default function Canvas() {
         const shapeWidth = parseInt(shape.width);
         const shapeHeight = parseInt(shape.height);
 
-        const width = 900; // SVG width
-        const height = 500; // SVG height
+        // const width = 900; // SVG width
+        // const height = 500; // SVG height
 
-        shape.left = `${Math.min(Math.max(x, 0), width - shapeWidth)}px`;
-        shape.top = `${Math.min(Math.max(y, 0), height - shapeHeight)}px`;
+        shape.left = `${Math.min(Math.max(x, 0), parseInt(width) - shapeWidth)}px`;
+        shape.top = `${Math.min(Math.max(y, 0), parseInt(height) - shapeHeight)}px`;
 
         updatedItems[draggingIndex] = shape;
         setItems(updatedItems);
 
     }
 
+  const {pageWidth,setPageWidth} = pageStore() as widthState;
+  useEffect(()=>{
+    console.log(pageWidth);
+  })
   return (
     <div className="flex-1 bg-foreground flex items-center justify-center mt-[-70px]">
         <div className="absolute top-4 left-4 w-16 h-16">
@@ -111,8 +116,8 @@ export default function Canvas() {
       <svg
   id="frame"
   className="relative bg-white border border-gray-400"
-  width="900"
-  height="500"
+  width={width}
+  height={height}
   onMouseDown={(e) => draw(e)}
   onMouseMove={(e) => handleMouseMove(e)}
   onMouseUp={handleMouseUp}
