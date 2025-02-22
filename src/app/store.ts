@@ -43,10 +43,26 @@ const useStore = create((set) => ({
   setSvg: (state: string) => {
     set({svg:state})
   },
-  index: "",
+  index: -1,
   setIndex: (state: number) => {
     set({index: state});
   }
 }));
 
 export default useStore;
+export type widthState = {
+    pageWidth: string;
+    setPageWidth: (pageWidth:string) => void;
+}
+
+export type heightState = {
+    pageHeight: string;
+    setPageHeight: (pageHeight:string) => void;
+}
+
+export const pageStore = create((set:any)=>({
+    pageWidth: "",
+    setPageWidth: (state:string) => {set({pageWidth:state})},
+    pageHeight: "",
+    setPageHeight: (state:string) => {set({pageHeight:state})},
+}))
