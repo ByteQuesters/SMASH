@@ -16,9 +16,15 @@ export type itemState = {
 };
 
 export type svgState = {
-    svg: string,
-    setSvg: (svg:string) => void;
+  svg: string[],
+  setSvg: (svg: string[]) => void;
+};
+
+export type indexState = {
+  index: number,
+  setIndex: (index:number) => void;
 }
+
 
 const useStore = create((set) => ({
   shape: "",
@@ -36,6 +42,10 @@ const useStore = create((set) => ({
   svg: [],
   setSvg: (state: string) => {
     set({svg:state})
+  },
+  index: "",
+  setIndex: (state: number) => {
+    set({index: state});
   }
 }));
 
