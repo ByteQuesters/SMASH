@@ -1,0 +1,30 @@
+{
+    "shapes": [
+      {
+        "name": "Rectangle",
+        "type": "rect",
+        "attributes": {
+          "width": "70",
+          "height": "50",
+          "x": "25",
+          "y": "35",
+          "fill": "#ffffff",
+          "stroke": "#000",
+          "strokeWidth": "2"
+        }
+      },
+      {
+        "name": "Circle",
+        "type": "circle",
+        "attributes": {
+          "r": "40",
+          "cx": "50",
+          "cy": "50",
+          "fill": "#ffffff",
+          "stroke": "#000",
+          "strokeWidth": "2"
+        }
+      }
+    ]
+  }
+  
