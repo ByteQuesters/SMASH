@@ -1,15 +1,18 @@
 "use client";
 import { useEffect, useState } from "react";
+import useStore, { propState, shapeState } from "../store";
 
 interface Shape {
   name: string;
   type: string;
-  attributes: Record<string, any>;
+  attributes: Record<string, string>;
+  properties: Record<string,string>;
 }
 
 export default function ShapesPanel({ isVisible }: { isVisible: boolean }) {
   const [shapes, setShapes] = useState<Shape[]>([]);
-
+  const { shape, setShape } = useStore() as shapeState;
+  const {properties,setProperties} = useStore() as propState;
   useEffect(() => {
     fetch("/shapes.json")
       .then((res) => res.json())
@@ -19,6 +22,11 @@ export default function ShapesPanel({ isVisible }: { isVisible: boolean }) {
 
   if (!isVisible) return null;
 
+  const handleSelect = (shape:Shape) => {
+    setShape(shape.name);
+    setProperties(shape.properties);
+  }
+  
   return (
     <div className="absolute top-[42%] left-[85px] w-48 bg-white border border-gray-300 shadow-lg rounded-lg p-2">
       <h3 className="text-sm font-bold mb-2 text-center">Shapes</h3>
@@ -27,7 +35,7 @@ export default function ShapesPanel({ isVisible }: { isVisible: boolean }) {
           <button
             key={index}
             className="flex items-center justify-center w-20 h-20 p-2 border rounded hover:bg-gray-200"
-            onClick={() => console.log(`Selected shape: ${shape.name}`)}
+            onClick={() => {handleSelect(shape)}}
           >
             <svg
               viewBox="0 0 100 100"
@@ -36,15 +44,15 @@ export default function ShapesPanel({ isVisible }: { isVisible: boolean }) {
               className="fill-current text-black"
             >
               {shape.type === "rect" && (
-                <rect {...shape.attributes} />
+                <rect {...shape.attributes}  />
               )}
-              {shape.type === "circle" && (
+              {/* {shape.type === "circle" && (
                 <circle {...shape.attributes} />
-              )}
-              {/* {shape.type === "ellipse" && (
+              )} */}
+              {shape.type === "ellipse" && (
                 <ellipse {...shape.attributes} />
               )}
-              {shape.type === "line" && (
+              {/* {shape.type === "line" && (
                 <line {...shape.attributes} strokeWidth="2" stroke="black" />
               )} */}
             </svg>

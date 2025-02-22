@@ -10,7 +10,7 @@ export default function Canvas() {
         <img src="/logosmash.png" className="w-auto h-auto max-w-[150px] max-h-[200px] " />
       </div>
 
-      <svg id="canvas" className="bg-white border border-gray-400" width="900" height="500"></svg>
+      <svg id="canvas" className="relative bg-white border border-gray-400" width="900" height="500" onMouseDown={(e)=>{draw(e)}} on></svg>
       < Toolbar />
     </div>
   );
