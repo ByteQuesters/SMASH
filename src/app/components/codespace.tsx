@@ -1,4 +1,4 @@
-
+"use client";
 import { useState } from "react";
 
 export default function CodeSpace() {
@@ -7,7 +7,7 @@ export default function CodeSpace() {
   return (
     <div className="w-1/4 bg-code p-4 border-l flex flex-col h-screen">
       {/* Code Editor */}
-      <h2 className="text-black font-bold mb-2">Code Editor</h2>
+      <h2 className="text-black text-center font-bold mb-2">Code Editor</h2>
       <textarea
         className="w-[390px] h-[800px] p-2 border rounded bg-white resize-none overflow-auto"
         value={code}
