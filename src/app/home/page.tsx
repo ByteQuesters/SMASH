@@ -16,23 +16,23 @@ export default function Home() {
   const [isValid, setIsValid] = useState(true);
 
   return (
-    <div className="min-h-screen bg-[#FCE7C8] p-6 text-black flex flex-col items-center gap-6">
+    <div className="min-h-screen bg-[#FCE7C8]  text-black flex flex-col items-center gap-6 place-items-center">
       {/* Logo at the top */}
       <img src={Logo.src} alt="Logo" className="w-64 h-22" />
 
       {/* Main Content */}
-      <div className="grid gap-4 grid-cols-4 grid-rows-3 w-full">
-        <FileUpload svgPreview={svgPreview} setSvgPreview={setSvgPreview} fileInputRef={fileInputRef} />
-        <CreateProject 
-          showModal={showModal} 
-          setShowModal={setShowModal} 
-          width={width} 
-          setWidth={setWidth} 
-          height={height} 
-          setHeight={setHeight} 
-          isValid={isValid} 
-          setIsValid={setIsValid} 
-          router={router} 
+      <div className="grid w-full place-items-center">
+        {/* <FileUpload svgPreview={svgPreview} setSvgPreview={setSvgPreview} fileInputRef={fileInputRef} /> */}
+        <CreateProject
+          showModal={showModal}
+          setShowModal={setShowModal}
+          width={width}
+          setWidth={setWidth}
+          height={height}
+          setHeight={setHeight}
+          isValid={isValid}
+          setIsValid={setIsValid}
+          router={router}
         />
       </div>
     </div>
