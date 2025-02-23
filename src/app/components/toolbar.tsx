@@ -11,7 +11,7 @@ interface ToolbarProps {
   triggerUpload: () => void;
 }
 
-export default function Toolbar({ setSvgData, fileInputRef, triggerUpload }: ToolbarProps) {
+export default function Toolbar() {
   const [showShapes, setShowShapes] = useState(false);
   const [showAnimations, setShowAnimations] = useState(false);
 
@@ -48,7 +48,7 @@ export default function Toolbar({ setSvgData, fileInputRef, triggerUpload }: Too
         </button>
 
         {/* Upload Button */}
-        <button className="flex flex-col items-center space-y-1" onClick={triggerUpload}>
+        <button className="flex flex-col items-center space-y-1">
           <Upload size={24} />
           <span className="text-xs">Upload</span>
         </button>

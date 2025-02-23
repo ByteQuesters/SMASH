@@ -36,6 +36,7 @@
 
 import { Plus } from "lucide-react";
 import useStore,{framesState, itemState} from "../store";
+import { useState } from "react";
 
 interface TimelineProps {
   frames: { id: number; svg: string }[];
@@ -45,11 +46,18 @@ interface TimelineProps {
 export default function Timeline() {
   const {frames,setFrames} = useStore() as framesState;
   const {items,setItems} = useStore() as itemState;
+  const [frIndex,setFrIndex] = useState(0);
+
   const handleFrameClick = (index:number)=>{
+    const tempFrames = [...frames];
+    tempFrames[frIndex] = items;
+    setFrames(tempFrames);
+    setFrIndex(index);
     setItems([...frames[index]]);
   }
   const handleAdd = ()=>{
-    const tempFrames = frames.slice(0,-1);
+    setFrIndex(frIndex+1);
+    const tempFrames = [...(frames.slice(0,-1))];
     setFrames([...tempFrames,items,[]]);
     setItems([]);
   }
@@ -71,6 +79,14 @@ export default function Timeline() {
           <Plus size={20} />
         </button>
       </div>
+      {/* <div>
+        <button onClick={handlePlay}>
+          Play Animation
+        </button>
+        <button onClick={handleStop}>
+          Stop Animation
+        </button>
+      </div> */}
     </div>
   );
 }

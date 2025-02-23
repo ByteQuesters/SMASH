@@ -29,6 +29,10 @@ export type framesState = {
   frames: Record<string,string>[][];
   setFrames: (frame: Record<string,string>[][]) => void;
 }
+export type svgCodeState = {
+  svgCode: string;
+  setSvgCode: (svg: string) => void;
+};
 
 const useStore = create((set) => ({
   shape: "",
@@ -54,8 +58,13 @@ const useStore = create((set) => ({
   frames: [[]],
   setFrames: (state: Record<string,string>[][]) => {
     set({frames:state});
-  }
+  },
+  svgCode: "<svg></svg>",
+  setSvgCode: (svg:any) => set({ svgCode: svg }),
+  
 }));
+
+
 
 export default useStore;
 
