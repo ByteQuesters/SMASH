@@ -25,6 +25,10 @@ export type indexState = {
   setIndex: (index:number) => void;
 }
 
+export type svgCodeState = {
+  svgCode: string;
+  setSvgCode: (svg: string) => void;
+};
 
 const useStore = create((set) => ({
   shape: "",
@@ -46,8 +50,13 @@ const useStore = create((set) => ({
   index: -1,
   setIndex: (state: number) => {
     set({index: state});
-  }
+  },
+  svgCode: "<svg></svg>",
+  setSvgCode: (svg:any) => set({ svgCode: svg }),
+  
 }));
+
+
 
 export default useStore;
 export type widthState = {
