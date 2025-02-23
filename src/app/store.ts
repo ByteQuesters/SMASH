@@ -25,6 +25,10 @@ export type indexState = {
   setIndex: (index:number) => void;
 }
 
+export type framesState = {
+  frames: Record<string,string>[][];
+  setFrames: (frame: Record<string,string>[][]) => void;
+}
 
 const useStore = create((set) => ({
   shape: "",
@@ -46,10 +50,15 @@ const useStore = create((set) => ({
   index: -1,
   setIndex: (state: number) => {
     set({index: state});
+  },
+  frames: [[]],
+  setFrames: (state: Record<string,string>[][]) => {
+    set({frames:state});
   }
 }));
 
 export default useStore;
+
 export type widthState = {
     pageWidth: string;
     setPageWidth: (pageWidth:string) => void;
