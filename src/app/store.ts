@@ -33,6 +33,10 @@ export type svgCodeState = {
   svgCode: string;
   setSvgCode: (svg: string) => void;
 };
+export type frIndexState = {
+  frIndex: number;
+  setFrIndex: (index:number) => void;
+}
 
 const useStore = create((set) => ({
   shape: "",
@@ -61,6 +65,8 @@ const useStore = create((set) => ({
   },
   svgCode: "<svg></svg>",
   setSvgCode: (svg:any) => set({ svgCode: svg }),
+  frIndex: 0,
+  setFrIndex: (state:number) => set({frIndex:state}),
   
 }));
 
