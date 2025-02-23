@@ -14,14 +14,6 @@ export default function Home() {
   const [frames, setFrames] = useState<{ id: number; svg: string }[]>([]);
   const {show, setShow} = formStore();
 
-  const handleCaptureFrame = () => {
-    const newFrame = {
-      id: frames.length + 1,
-      svg: "<svg>...</svg>", // Replace with actual captured SVG
-    };
-    setFrames([...frames, newFrame]);
-  };
-
   useEffect(() => {
     console.log(pageWidth + " " + pageHeight);
   }, [pageWidth, pageHeight]);
@@ -32,8 +24,8 @@ export default function Home() {
         <Canvas width={pageWidth} height={pageHeight} />
         <Timeline />
       </div>
-      <CodeSpace />
-      {show && <PropertiesForm />}
+        <CodeSpace />
+        {show && <PropertiesForm />}
     </div>
   );
 }
