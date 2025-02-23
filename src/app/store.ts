@@ -33,6 +33,10 @@ export type svgCodeState = {
   svgCode: string;
   setSvgCode: (svg: string) => void;
 };
+export type frIndexState = {
+  frIndex: number;
+  setFrIndex: (index:number) => void;
+}
 
 const useStore = create((set) => ({
   shape: "",
@@ -61,6 +65,8 @@ const useStore = create((set) => ({
   },
   svgCode: "<svg></svg>",
   setSvgCode: (svg:any) => set({ svgCode: svg }),
+  frIndex: 0,
+  setFrIndex: (state:number) => set({frIndex:state}),
   
 }));
 
@@ -84,7 +90,6 @@ export const pageStore = create((set:any)=>({
     pageHeight: "",
     setPageHeight: (state:string) => {set({pageHeight:state})},
 }))
-
 export const formStore = create((set:any)=>({
   show: false,
   setShow: (state:boolean) => {set({show:state})},
