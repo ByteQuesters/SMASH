@@ -16,7 +16,7 @@ SMASH makes animation so effortless—it’s like motion design, but cooler. �
 
 🔹 **Code Editor (for Devs)** – Offers direct access to the underlying SVG/animation code, making it easy for developers to tweak designs programmatically.
 
-🔹 **Export as GIF and SVG** – Lets users save their animations in versatile formats for easy sharing and reuse.
+🔹 **Export** – Lets users save their animations in SVG formats  for easy sharing and reuse.
 
 🔹 **Elements to Graphics** – Converts basic shapes into detailed vector graphics, expanding creative possibilities within the tool.
 
@@ -41,7 +41,13 @@ SMASH makes animation so effortless—it’s like motion design, but cooler. �
 ✅ **Startups & Small Businesses** – Create professional animated logos for branding, marketing, and presentations.  
 ✅ **Web Developers** – Integrate lightweight CSS and Lottie animations into websites for a seamless UI/UX experience.  
 ✅ **Content Creators & Designers** – Easily produce motion graphics for social media, YouTube, and promotional content.  
-✅ **Product & Marketing Teams** – Prototype and test logo animations for digital ads, app intros, and interactive experiences.  
+✅ **Product & Marketing Teams** – Prototype and test logo animations for digital ads, app intros, and interactive experiences.
+
+# **Future Enhancement**
+
+➡️ Export Animations in Various other forms
+➡️ Add More designing elements
+➡️ Adding nee transition Styles
 
 # License
 This project is licensed under the MIT License. You are free to use, modify, and distribute this software under the terms of the [MIT LICENSE](https://github.com/ByteQuesters/SMASH/blob/main/LICENSE)
