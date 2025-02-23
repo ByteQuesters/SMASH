@@ -3,14 +3,16 @@
 import Canvas from "./components/canvas";
 import CodeSpace from "./components/codespace";
 import Timeline from "./components/timeline";
-import { pageStore } from "./store";
+import { pageStore, formStore } from "./store";
 import { useEffect, useState } from "react";
+import PropertiesForm from "./components/PropertiesForm";
 
 export default function Home() {
   const store = pageStore();
   const { pageWidth, setPageWidth, pageHeight, setPageHeight } = store;
 
   const [frames, setFrames] = useState<{ id: number; svg: string }[]>([]);
+  const {show, setShow} = formStore();
 
   const handleCaptureFrame = () => {
     const newFrame = {
@@ -31,6 +33,7 @@ export default function Home() {
         <Timeline />
       </div>
       <CodeSpace />
+      {show && <PropertiesForm />}
     </div>
   );
 }

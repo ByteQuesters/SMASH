@@ -124,7 +124,6 @@
 // }
 "use client";
 import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from "react";
-import { Upload } from "lucide-react";
 import { pageStore, widthState } from "../store";
 import Toolbar from "./toolbar";
 import useStore, { shapeState, propState, itemState, svgState, indexState } from "../store";
@@ -308,9 +307,9 @@ const Canvas = forwardRef<SVGSVGElement, CanvasProps>(({ width, height }, ref) =
               />
             )}
           </g>
-        ))}z
+        ))}
       </svg>
-      <Toolbar setSvgData={setSvgData} fileInputRef={fileInputRef} triggerUpload={triggerFileUpload} />
+      <Toolbar />
 
       <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} />
     </div>

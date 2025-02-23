@@ -84,3 +84,12 @@ export const pageStore = create((set:any)=>({
     pageHeight: "",
     setPageHeight: (state:string) => {set({pageHeight:state})},
 }))
+
+export const formStore = create((set:any)=>({
+  show: false,
+  setShow: (state:boolean) => {set({show:state})},
+  props: {},
+  setProps: (state:Record<string,string>) => {set({props:state})},
+  ind: 0,
+  setInd: (state:number) => {set({index:state})}
+}))

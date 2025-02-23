@@ -1,7 +1,7 @@
 
 "use client";
 import { useState,useEffect } from "react";
-import { framesState, pageStore, widthState } from "../store";
+import { formStore, framesState, pageStore, widthState } from "../store";
 import Toolbar from "./toolbar";
 import  useSvgCode  from "../store";
 import useStore, {shapeState, propState, itemState, svgState, indexState,svgCodeState} from "../store";
@@ -16,6 +16,10 @@ export default function Canvas({width,height}:{width:string,height:string}) {
     const [startPoint, setStartPoint] = useState<{ x: number; y: number } | null>(null);
     const {properties,setProperties} = useStore() as propState;
     const [offset, setOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+    const {ind,setInd} = formStore() as {ind:number,setInd:(index:number)=>void};
+    const {show,setShow} = formStore() as {show:boolean,setShow:(show:boolean)=>void};
+    const {props,setProps} = formStore() as {props:Record<string,string>,setProps:(props:Record<string,string>)=>void};
+
     // const [triggerAnimation, setTriggerAnimation] = useState(false);
     const { setSvgCode } = useStore() as svgCodeState;
 
@@ -172,7 +176,11 @@ export default function Canvas({width,height}:{width:string,height:string}) {
     setDraggingIndex(null);
     setStartPoint(null);
   };
-
+    const handleOpenForm = (prop:Record<string,string>,ind:number) => {
+      setShow(true);
+      setProps(prop);
+      setInd(ind);
+    }
     const handleMouseMove = (event:React.MouseEvent<SVGSVGElement>) => {
         if(draggingIndex==null) return;
         const x = event.clientX - X - offset.x;
@@ -224,6 +232,7 @@ export default function Canvas({width,height}:{width:string,height:string}) {
         style={{ cursor: draggingIndex === index ? "grabbing" : "grab" }}
         onMouseDown={() => setDraggingIndex(index)}
         onClick={() => setIndex(index)}
+        onDoubleClick={(e)=>{handleOpenForm(item,index)}}
       >
         {/* Simple motion path for testing */}
         {item.animation === "animateMotion" && (
