@@ -1,40 +1,6 @@
-// "use client";
-// import useStore, {indexState, itemState} from "../store";
-
-// interface AnimationPanelProps {
-// isVisible: boolean;
-// }
-
-// export default function AnimationPanel({ isVisible }: AnimationPanelProps) {
-// if (!isVisible) return null;
-// const {index,setIndex} = useStore() as indexState;
-// const {items,setItems} = useStore() as itemState;
-// const handleAnimation = (type:string) => {
-//     if (index !== -1) {
-//       const updatedItems = items.map((item, i) =>
-//         i === index ? { ...item, animation: type } : { ...item}
-//       );
-//       setItems(updatedItems);
-//       setIndex(-1);
-//     }
-//   };
-// return (
-//     <div className="absolute top-[50%] left-[90px] w-56 bg-white shadow-lg border rounded-lg p-4">
-//         <h2 className="text-black font-semibold mb-3">Animations</h2>
-//         <ul className="space-y-2">
-//             <li className="p-2 bg-gray-300 text-black rounded" onClick={()=>handleAnimation("animate")}>animate</li>
-//             <li className="p-2 bg-gray-300 text-black rounded" onClick={()=>handleAnimation("animateTransform")}>animateTransform</li>
-//             <li className="p-2 bg-gray-300 text-black rounded" onClick={()=>handleAnimation("animateMotion")}>animateMotion</li>
-            
-//         </ul>
-//     </div>
-//     );
-// }
-
-
 "use client";
 import { useRef, useEffect, useState } from "react";
-import useStore, { indexState, itemState } from "../store";
+import useStore, { framesState, frIndexState, indexState,  } from "../store";
 
 interface AnimationPanelProps {
   isVisible: boolean;
@@ -44,15 +10,28 @@ interface AnimationPanelProps {
 export default function AnimationPanel({ isVisible, onClose }: AnimationPanelProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const { index, setIndex } = useStore() as indexState;
-  const { items, setItems } = useStore() as itemState;
+  // const { items, setItems } = useStore() as itemState;
+  const {frames,setFrames} = useStore() as framesState;
+  const {frIndex,setFrIndex} = useStore() as frIndexState;
+  const items = frames[frIndex];
   const [isDragging, setIsDragging] = useState(false);
 
   const handleAnimation = (type: string) => {
+    const animationUpdater = (item: any) => {
+      const key = Object.keys(item)[0];
+      const val = item[key];
+      const ret = { [key]: {...val, animation: type} };
+      // console.log(JSON.stringify(ret)+"\n\n\n\nWTK");
+      return ret;
+    };
     if (index !== -1) {
-      const updatedItems = items.map((item, i) =>
-        i === index ? { ...item, animation: type } : item
+      const updatedItems: Record<string, any>[] = items.map((item: Record<string, any>, i: number) =>
+        i === index ? animationUpdater(item) : item
       );
-      setItems(updatedItems);
+      // setItems(updatedItems);
+      const tempFrames = [...frames];
+      tempFrames[frIndex] = updatedItems;
+      setFrames(tempFrames);
       setIndex(-1);
       onClose(); 
     }

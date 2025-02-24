@@ -1,7 +1,7 @@
 
 "use client";
 import { useEffect, useState, useRef } from "react";
-import useStore, { propState, shapeState } from "../store";
+import useStore, { shapeState } from "../store";
 
 interface Shape {
   name: string;
@@ -13,7 +13,7 @@ interface Shape {
 export default function ShapesPanel({ isVisible, onClose }: { isVisible: boolean; onClose: () => void }) {
   const [shapes, setShapes] = useState<Shape[]>([]);
   const { shape, setShape } = useStore() as shapeState;
-  const { properties, setProperties } = useStore() as propState;
+  // const { properties, setProperties } = useStore() as propState;
   const panelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -43,7 +43,7 @@ export default function ShapesPanel({ isVisible, onClose }: { isVisible: boolean
 
   const handleSelect = (shape: Shape) => {
     setShape(shape.name);
-    setProperties(shape.properties);
+    // setProperties(shape.properties);
     onClose();
   };
 

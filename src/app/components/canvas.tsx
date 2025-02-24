@@ -1,20 +1,22 @@
 
 "use client";
 import { useState,useEffect } from "react";
-import { formStore, framesState, pageStore, widthState } from "../store";
+import { formStore, framesState, pageStore, widthState, frIndexState } from "../store";
 import Toolbar from "./toolbar";
 import  useSvgCode  from "../store";
-import useStore, {shapeState, propState, itemState, svgState, indexState,svgCodeState} from "../store";
+import shapesJson from "../../../public/shapes.json";
+import useStore, {shapeState, svgState, indexState,svgCodeState} from "../store";
 
 export default function Canvas({width,height}:{width:string,height:string}) {
-  const {items,setItems} = useStore() as itemState;
+  // const {items,setItems} = useStore() as itemState;
     const {shape,setShape} = useStore() as shapeState;
     const {svg , setSvg} = useStore() as svgState;
     const {frames,setFrames} = useStore() as framesState;
+    const {frIndex,setFrIndex} = useStore() as frIndexState;
     const {index, setIndex} = useStore() as indexState;
     const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
     const [startPoint, setStartPoint] = useState<{ x: number; y: number } | null>(null);
-    const {properties,setProperties} = useStore() as propState;
+    // const {properties,setProperties} = useStore() as propState;
     const [offset, setOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
     const {ind,setInd} = formStore() as {ind:number,setInd:(index:number)=>void};
     const {show,setShow} = formStore() as {show:boolean,setShow:(show:boolean)=>void};
@@ -36,12 +38,18 @@ export default function Canvas({width,height}:{width:string,height:string}) {
     // },[items]);
 
     useEffect(()=>{
-      console.log(JSON.stringify(items));
-    },[index]);
+      console.log(shape + "   \n hi  \n");
+    },[shape])
+
+    // useEffect(()=>{
+    //   console.log(JSON.stringify(items));
+    // },[index]);
 
     const generateSvgCode = (items: any[], width: string, height: string, svg: string[]) => {
       const shapes = items
-        .map((item, index) => {
+        .map((element, index) => {
+          const item: any = Object.values(element)[0];
+          let key = Object.keys(element)[0];
           let pathTag = "";
           let animationTag = "";
     
@@ -86,7 +94,7 @@ export default function Canvas({width,height}:{width:string,height:string}) {
           }
     
           // Rendering Shapes with pathTag above the shape
-          if (svg[index] === "Rectangle") {
+          if (key === "Rectangle") {
             return `
               ${pathTag}
               <rect x="${item.left}" y="${item.top}" width="${item.width}" height="${item.height}" 
@@ -94,7 +102,7 @@ export default function Canvas({width,height}:{width:string,height:string}) {
                 ${animationTag}
               </rect>
             `;
-          } else if (svg[index] === "Ellipse") {
+          } else if (key === "Ellipse") {
             return `
               ${pathTag}
               <ellipse cx="${centerX}" cy="${centerY}" 
@@ -115,13 +123,18 @@ export default function Canvas({width,height}:{width:string,height:string}) {
     
     
     useEffect(() => {
+      const items = frames[frIndex];
       const newSvgCode = generateSvgCode(items, width, height, svg);
       setSvgCode(newSvgCode);
-    }, [items, svg]);
+    }, [frames[frIndex], svg]);
   
     const draw = (event: React.MouseEvent<SVGSVGElement>) => {
         event.preventDefault();
-        
+        const itemsKey = frames[frIndex];
+        let items:any[] = []
+        for(let i of itemsKey){
+          items.push(Object.values(i)[0])
+        }
         const x = event.clientX -X;
         const y = event.clientY-Y;
         const index = items.findIndex(
@@ -152,17 +165,36 @@ export default function Canvas({width,height}:{width:string,height:string}) {
             });
         } else {
             if(!shape) return;
-            if(!properties) return;
-            console.log(`Click position: x = ${x}, y = ${y}`);
-            const style: Record<string,string> = {...properties,"left":`${x-parseInt(properties.width)/2}px`,"top":`${y-parseInt(properties.height)/2}px`,"animation":""};
+            // if(!properties) return;
+            let properties:any = {};
+            for(let itr of shapesJson["shapes"]){
+              console.log(itr);
+              if(itr["name"]===shape){
+                properties = itr["properties"];
+                break;
+              }
+            }
+            // console.log(`Click position: x = ${x}, y = ${y}`);
+            console.log("canva\n\n"+shape+"\n\n\n"+JSON.stringify(properties));
+            // const style: Record<string,string> = {shape:{...properties,"left":`${x-parseInt(properties.width)/2}px`,"top":`${y-parseInt(properties.height)/2}px`,"animation":""}};
+            let style: Record<string, string> = {};
+            style[shape] = {
+              ...properties,
+              left: `${x - parseInt(properties.width) / 2}px`,
+              top: `${y - parseInt(properties.height) / 2}px`,
+              animation: "",
+            };
             console.log(properties.width);
             setSvg([...svg, shape]);
             console.log(JSON.stringify(svg));
-            const tempItems = [...items,style];
-            setItems(tempItems);
+            const tempItems = [...(frames[frIndex]),style];
+            const tempFrame = [...frames];
+            tempFrame[frIndex] = tempItems;
+            setFrames(tempFrame);
+            // setItems(tempItems);
             console.log(JSON.stringify(items));
             setShape('');
-            setProperties({});
+            // setProperties({});
             // const tempFrames = frames.slice(0,-1);
             // const dumArr = [...tempFrames,items];
             // console.log(JSON.stringify(dumArr)+"hi");
@@ -186,8 +218,10 @@ export default function Canvas({width,height}:{width:string,height:string}) {
         const x = event.clientX - X - offset.x;
         const y = event.clientY - Y - offset.y;
 
-        const updatedItems = [...items];
-        const shape = { ...updatedItems[draggingIndex] };
+        const updatedItems = [...(frames[frIndex])];
+        const shapeKP = { ...updatedItems[draggingIndex] };
+        const shapeKey = Object.keys(shapeKP)[0];
+        const shape:any = shapeKP[shapeKey];
         const shapeWidth = parseInt(shape.width);
         const shapeHeight = parseInt(shape.height);
 
@@ -196,9 +230,12 @@ export default function Canvas({width,height}:{width:string,height:string}) {
 
         shape.left = `${Math.min(Math.max(x, 0), parseInt(width) - shapeWidth)}px`;
         shape.top = `${Math.min(Math.max(y, 0), parseInt(height) - shapeHeight)}px`;
-
-        updatedItems[draggingIndex] = shape;
-        setItems(updatedItems);
+        shapeKP[shapeKey] = shape;
+        updatedItems[draggingIndex] = shapeKP;
+        // setItems(updatedItems);
+        const tempFrames = [...frames];
+        tempFrames[frIndex] = updatedItems;
+        setFrames(tempFrames);
 
     }
 
@@ -221,28 +258,40 @@ export default function Canvas({width,height}:{width:string,height:string}) {
   onMouseMove={(e) => handleMouseMove(e)}
   onMouseUp={handleMouseUp}
 >
-  {items.map((item, index) => {
+  {frames[frIndex].map((element, i) => {
+    const item:any = Object.values(element)[0];
+    let key = Object.keys(element)[0];
+    // console.log("keyArr\n\n"+JSON.stringify(key));
+    // console.log("frames\n\n"+JSON.stringify(frames[frIndex]));
+    console.log(JSON.stringify(item)+"\n\n\nitem");
     const centerX = parseInt(item.left) + parseInt(item.width) / 2;
     const centerY = parseInt(item.top) + parseInt(item.height) / 2;
-
     return (
       <g
-        key={item.id || index} // Ensure stable key for each shape
+        key={item.id || i} // Ensure stable key for each shape
         transform={`translate(${parseInt(item.left)}, ${parseInt(item.top)})`}
-        style={{ cursor: draggingIndex === index ? "grabbing" : "grab" }}
-        onMouseDown={() => setDraggingIndex(index)}
-        onClick={() => setIndex(index)}
-        onDoubleClick={(e)=>{handleOpenForm(item,index)}}
+        style={{
+          cursor: draggingIndex === i ? "grabbing" : "grab",
+          // stroke: i === index ? "blue" : "none", // Blue stroke for selected
+          // strokeWidth: i === index ? "3px" : "0", // Visible stroke only when selected
+          // filter:
+          //   i === index ? "drop-shadow(0px 0px 5px blue)" : "none",
+        }}
+        onMouseDown={() => setDraggingIndex(i)}
+        onClick={() => {if (index !==i) setIndex(i);}}
+        onDoubleClick={() => {
+          handleOpenForm(element, i);
+        }}
       >
         {/* Simple motion path for testing */}
         {item.animation === "animateMotion" && (
           <path
-          id={`motionPath-${index}`}
+            id={`motionPath-${i}`}
             d="M 0,0 C 100,100 200,-100 300,0"
             fill="transparent"
           />
         )}
-        {svg[index] === "Rectangle" && (
+        {key === "Rectangle" && (
           <rect
             width={parseInt(item.width)}
             height={parseInt(item.height)}
@@ -265,34 +314,38 @@ export default function Canvas({width,height}:{width:string,height:string}) {
                     attributeName="transform"
                     attributeType="XML"
                     type="rotate"
-                    from={`0 ${parseInt(item.width) / 2} ${parseInt(item.height) / 2}`}
-                    to={`360 ${parseInt(item.width) / 2} ${parseInt(item.height) / 2}`}
+                    from={`0 ${parseInt(item.width) / 2} ${
+                      parseInt(item.height) / 2
+                    }`}
+                    to={`360 ${parseInt(item.width) / 2} ${
+                      parseInt(item.height) / 2
+                    }`}
                     dur="2s"
                     repeatCount="indefinite"
                   />
                 )}
-                 {item.animation === "animateMotion" && (
-              <animateMotion dur="4s" repeatCount="indefinite">
-                <mpath xlinkHref={`#motionPath-${index}`} />
-              </animateMotion>
-            )}
+                {item.animation === "animateMotion" && (
+                  <animateMotion dur="4s" repeatCount="indefinite">
+                    <mpath xlinkHref={`#motionPath-${i}`} />
+                  </animateMotion>
+                )}
               </>
             )}
           </rect>
         )}
 
-        {svg[index] === "Ellipse" && (
+        {key === "Ellipse" && (
           <ellipse
-          cx={parseInt(item.width) / 2}
-          cy={parseInt(item.height) / 2}
-          rx={parseInt(item.width) / 2}
-          ry={parseInt(item.height) / 2}
-          fill={item.backgroundColor}
-          style={{
-            stroke: item.borderColor,
-            strokeWidth: item.border,
-          }}
-        >
+            cx={parseInt(item.width) / 2}
+            cy={parseInt(item.height) / 2}
+            rx={parseInt(item.width) / 2}
+            ry={parseInt(item.height) / 2}
+            fill={item.backgroundColor}
+            style={{
+              stroke: item.borderColor,
+              strokeWidth: item.border,
+            }}
+          >
             {item.animation.includes("animate") && (
               <>
                 {item.animation === "animate" && (
@@ -308,17 +361,21 @@ export default function Canvas({width,height}:{width:string,height:string}) {
                     attributeName="transform"
                     attributeType="XML"
                     type="rotate"
-                    from={`0 ${parseInt(item.width) / 2} ${parseInt(item.height) / 2}`}
-                    to={`360 ${parseInt(item.width) / 2} ${parseInt(item.height) / 2}`}
+                    from={`0 ${parseInt(item.width) / 2} ${
+                      parseInt(item.height) / 2
+                    }`}
+                    to={`360 ${parseInt(item.width) / 2} ${
+                      parseInt(item.height) / 2
+                    }`}
                     dur="2s"
                     repeatCount="indefinite"
                   />
                 )}
                 {item.animation === "animateMotion" && (
-              <animateMotion dur="4s" repeatCount="indefinite">
-                <mpath xlinkHref={`#motionPath-${index}`} />
-              </animateMotion>
-            )}
+                  <animateMotion dur="4s" repeatCount="indefinite">
+                    <mpath xlinkHref={`#motionPath-${i}`} />
+                  </animateMotion>
+                )}
               </>
             )}
           </ellipse>

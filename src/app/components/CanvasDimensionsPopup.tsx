@@ -45,7 +45,7 @@ const CanvasDimensionsPopup: React.FC<CanvasDimensionsPopupProps> = ({ showModal
     setPageHeight(tempHeight);
     setShowModal(false);
     console.log(tempHeight);
-    router.push('/');
+    router.push('/main');
   };
 
   return (

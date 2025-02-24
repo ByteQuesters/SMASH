@@ -15,11 +15,11 @@
       "properties": {
         "height": "50px",
         "width": "40px",
-        "backgroundColor": "white",
-        "opacity": "0",
         "border": "1px",
-        "borderColor": "black",
-        "borderOpacity": "0"
+        "opacity": "0",
+        "borderOpacity": "0",
+        "backgroundColor": "white",
+        "borderColor": "black"
       }
     },
     {

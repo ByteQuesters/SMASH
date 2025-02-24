@@ -40,7 +40,7 @@ export default function CreateProject({ showModal, setShowModal, width, setWidth
         Start Creating
       </button>
 
-      <CanvasDimensionsPopup showModal={showModal} setShowModal={setShowModal} width={width} setWidth={setWidth} height={height} setHeight={setHeight} isValid={isValid} setIsValid={setIsValid} handleProceed={handleProceed} />
+      <CanvasDimensionsPopup showModal={showModal} setShowModal={setShowModal} width={width} setWidth={setWidth} height={height} setHeight={setHeight} isValid={isValid} setIsValid={setIsValid} />
     </div>
   );
 }
