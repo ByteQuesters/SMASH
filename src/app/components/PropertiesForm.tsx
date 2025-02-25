@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useState } from "react";
 import useStore, { formStore, framesState, frIndexState } from "../store";
 
 const PropertiesForm = () => {
@@ -8,25 +9,33 @@ const PropertiesForm = () => {
   };
   const propKey = Object.keys(props)[0];
   const prop: Record<string, string> = props[propKey];
-  const { ind, setInd } = formStore();
+  // const ind: number = parseInt(props["ind"]);
+  const [ind, setInd] = useState<number>(parseInt(props["ind"])); 
+  // const { ind, setInd } = formStore() as { ind: number; setInd: (ind: number) => void };
   const { show, setShow } = formStore();
   const { frames, setFrames } = useStore() as framesState;
   const { frIndex, setFrIndex } = useStore() as frIndexState;
+  console.log(ind+"\n\n\nwhy this kolaveri??");
 
   const handleChange = (val: string, key: string) => {
     const tempProp = { ...prop };
     tempProp[key] = val;
     setProps({ [propKey]: tempProp });
+    // console.log(JSON.stringify(props) + "\n\n\nwtk");
 
-    const items = frames[frIndex];
-    const tProp = [...items];
-    tProp[ind] = { ...props };
-    const tempFrames = [...frames];
-    tempFrames[frIndex] = tProp;
-    setFrames(tempFrames);
+      const items = frames[frIndex];
+      const tProp = [...items];
+      tProp[ind] = { ...props };
+      const tempFrames = [...frames];
+      tempFrames[frIndex] = tProp;
+      setFrames(tempFrames);
   };
-
+  useEffect(() => {
+    console.log(JSON.stringify(frames)+"\n\n\n\n\nAfter changing");
+  },[frames]);
+  
   const handleSubmit = () => {
+    console.log(JSON.stringify(frames)+"\n\n\n\n\nBefore chaning\n\n"+ind);
     const items = frames[frIndex];
     const tempProp = [...items];
     tempProp[ind] = { ...props };
@@ -34,6 +43,7 @@ const PropertiesForm = () => {
     tempFrames[frIndex] = tempProp;
     setFrames(tempFrames);
     setShow(false);
+    console.log("\n\n\nImaye...Imaye..."+ind);
   };
 
   return (
@@ -47,7 +57,7 @@ const PropertiesForm = () => {
       >
         {Object.keys(prop).map((element, index) => (
           <div key={index} className="grid grid-cols-2 items-center gap-3">
-            {(element !== "left" && element !== "top" && element !== "animation") && (
+            {(element !== "left" && element !== "top" && element !== "animation" && element !=="borderRadius") && (
               <label className="text-sm font-semibold capitalize">
                 {element}
               </label>

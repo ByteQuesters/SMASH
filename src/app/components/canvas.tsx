@@ -1,9 +1,9 @@
 
 "use client";
 import { useState,useEffect } from "react";
-import { formStore, framesState, pageStore, widthState, frIndexState } from "../store";
+import { formStore, framesState, frIndexState } from "../store";
 import Toolbar from "./toolbar";
-import  useSvgCode  from "../store";
+// import  useSvgCode  from "../store";
 import shapesJson from "../../../public/shapes.json";
 import useStore, {shapeState, svgState, indexState,svgCodeState} from "../store";
 
@@ -18,7 +18,7 @@ export default function Canvas({width,height}:{width:string,height:string}) {
     const [startPoint, setStartPoint] = useState<{ x: number; y: number } | null>(null);
     // const {properties,setProperties} = useStore() as propState;
     const [offset, setOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-    const {ind,setInd} = formStore() as {ind:number,setInd:(index:number)=>void};
+    // const {ind,setInd} = formStore() as {ind:number,setInd:(index:number)=>void};
     const {show,setShow} = formStore() as {show:boolean,setShow:(show:boolean)=>void};
     const {props,setProps} = formStore() as {props:Record<string,string>,setProps:(props:Record<string,string>)=>void};
 
@@ -131,9 +131,9 @@ export default function Canvas({width,height}:{width:string,height:string}) {
     const draw = (event: React.MouseEvent<SVGSVGElement>) => {
         event.preventDefault();
         const itemsKey = frames[frIndex];
-        let items:any[] = []
-        for(let i of itemsKey){
-          items.push(Object.values(i)[0])
+        const items:any[] = [];
+        for(const itr of itemsKey){
+          items.push(Object.values(itr)[0])
         }
         const x = event.clientX -X;
         const y = event.clientY-Y;
@@ -167,7 +167,7 @@ export default function Canvas({width,height}:{width:string,height:string}) {
             if(!shape) return;
             // if(!properties) return;
             let properties:any = {};
-            for(let itr of shapesJson["shapes"]){
+            for(const itr of shapesJson["shapes"]){
               console.log(itr);
               if(itr["name"]===shape){
                 properties = itr["properties"];
@@ -177,7 +177,7 @@ export default function Canvas({width,height}:{width:string,height:string}) {
             // console.log(`Click position: x = ${x}, y = ${y}`);
             console.log("canva\n\n"+shape+"\n\n\n"+JSON.stringify(properties));
             // const style: Record<string,string> = {shape:{...properties,"left":`${x-parseInt(properties.width)/2}px`,"top":`${y-parseInt(properties.height)/2}px`,"animation":""}};
-            let style: Record<string, string> = {};
+            const style: Record<string, string> = {};
             style[shape] = {
               ...properties,
               left: `${x - parseInt(properties.width) / 2}px`,
@@ -210,8 +210,9 @@ export default function Canvas({width,height}:{width:string,height:string}) {
   };
     const handleOpenForm = (prop:Record<string,string>,ind:number) => {
       setShow(true);
-      setProps(prop);
-      setInd(ind);
+      setProps({...prop,"ind":`${ind}`});
+      // setInd(ind);
+      console.log(ind);
     }
     const handleMouseMove = (event:React.MouseEvent<SVGSVGElement>) => {
         if(draggingIndex==null) return;
@@ -239,10 +240,10 @@ export default function Canvas({width,height}:{width:string,height:string}) {
 
     }
 
-  const {pageWidth,setPageWidth} = pageStore() as widthState;
-  useEffect(()=>{
-    console.log(pageWidth);
-  })
+  // const {pageWidth,setPageWidth} = pageStore() as widthState;
+  // useEffect(()=>{
+  //   console.log(pageWidth);
+  // })
   return (
     <div className="flex-1 bg-foreground flex items-center justify-center mt-[-70px]">
       <div className="absolute top-4 left-4 w-16 h-16">
@@ -260,12 +261,12 @@ export default function Canvas({width,height}:{width:string,height:string}) {
 >
   {frames[frIndex].map((element, i) => {
     const item:any = Object.values(element)[0];
-    let key = Object.keys(element)[0];
+    const key = Object.keys(element)[0];
     // console.log("keyArr\n\n"+JSON.stringify(key));
     // console.log("frames\n\n"+JSON.stringify(frames[frIndex]));
-    console.log(JSON.stringify(item)+"\n\n\nitem");
-    const centerX = parseInt(item.left) + parseInt(item.width) / 2;
-    const centerY = parseInt(item.top) + parseInt(item.height) / 2;
+    // console.log(JSON.stringify(item)+"\n\n\nitem");
+    // const centerX = parseInt(item.left) + parseInt(item.width) / 2;
+    // const centerY = parseInt(item.top) + parseInt(item.height) / 2;
     return (
       <g
         key={item.id || i} // Ensure stable key for each shape
