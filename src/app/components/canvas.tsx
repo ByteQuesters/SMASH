@@ -1,11 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 "use client";
 import { useState,useEffect } from "react";
-import { formStore, framesState, frIndexState } from "../store";
+import { animePanelState, formStore, framesState, frIndexState } from "../store";
 import Toolbar from "./toolbar";
 // import  useSvgCode  from "../store";
 import shapesJson from "../../../public/shapes.json";
-import useStore, {shapeState, svgState, indexState,svgCodeState} from "../store";
+import useStore, {shapeState, svgState, indexState,svgCodeState,animePanelStore} from "../store";
 
 export default function Canvas({width,height}:{width:string,height:string}) {
   // const {items,setItems} = useStore() as itemState;
@@ -21,7 +23,7 @@ export default function Canvas({width,height}:{width:string,height:string}) {
     // const {ind,setInd} = formStore() as {ind:number,setInd:(index:number)=>void};
     const {show,setShow} = formStore() as {show:boolean,setShow:(show:boolean)=>void};
     const {props,setProps} = formStore() as {props:Record<string,string>,setProps:(props:Record<string,string>)=>void};
-
+    const { showAnimations, setShowAnimations } = animePanelStore() as animePanelState;
     // const [triggerAnimation, setTriggerAnimation] = useState(false);
     const { setSvgCode } = useStore() as svgCodeState;
 
@@ -49,7 +51,7 @@ export default function Canvas({width,height}:{width:string,height:string}) {
       const shapes = items
         .map((element, index) => {
           const item: any = Object.values(element)[0];
-          let key = Object.keys(element)[0];
+          const key = Object.keys(element)[0];
           let pathTag = "";
           let animationTag = "";
     
@@ -60,10 +62,12 @@ export default function Canvas({width,height}:{width:string,height:string}) {
           if (item.animation === "animate") {
             animationTag = `
               <animate
-                attributeName="fill"
-                values="${item.backgroundColor};#f56565;${item.backgroundColor}"
-                dur="2s"
-                repeatCount="indefinite"
+                attributeName="${item.animationProperty.attribute}"
+                begin="${item.animationProperty.begin}"
+                from="${item.animationProperty.from || item.backgroundColor}"
+                to="${item.animationProperty.to}"
+                dur="${item.animationProperty.dur}"
+                repeatCount="${item.animationProperty.repeatCount}"
               />
             `;
           } else if (item.animation === "animateTransform") {
@@ -72,22 +76,22 @@ export default function Canvas({width,height}:{width:string,height:string}) {
                 attributeName="transform"
                 attributeType="XML"
                 type="rotate"
-                from="0 ${centerX} ${centerY}"
-                to="360 ${centerX} ${centerY}"
-                dur="2s"
-                repeatCount="indefinite"
+                from="${item.animationProperty.fromDegree} ${item.animationProperty.fromOriginX || centerX} ${item.animationProperty.fromOriginY || centerY}"
+                to="${item.animationProperty.toDegree} ${item.animationProperty.toOriginX || centerX} ${item.animationProperty.toOriginY || centerY}"
+                dur="${item.animationProperty.dur}"
+                repeatCount="${item.animationProperty.repeatCount}"
               />
             `;
           } else if (item.animation === "animateMotion") {
             pathTag = `
               <path
                 id="motionPath-${index}"
-                d="M 0,0 C 100,100 200,-100 300,0"
+                d="${item.animationProperty.path}"
                 fill="transparent"
               />
             `;
             animationTag = `
-              <animateMotion dur="4s" repeatCount="indefinite" rotate="auto">
+              <animateMotion dur="${item.animationProperty.dur}" repeatCount="${item.animationProperty.repeatCount}" rotate="auto" begin="${item.animationProperty.begin}">
                 <mpath xlink:href="#motionPath-${index}" />
               </animateMotion>
             `;
@@ -209,6 +213,7 @@ export default function Canvas({width,height}:{width:string,height:string}) {
     setStartPoint(null);
   };
     const handleOpenForm = (prop:Record<string,string>,ind:number) => {
+      setShowAnimations(false);
       setShow(true);
       setProps({...prop,"ind":`${ind}`});
       // setInd(ind);
@@ -262,24 +267,18 @@ export default function Canvas({width,height}:{width:string,height:string}) {
   {frames[frIndex].map((element, i) => {
     const item:any = Object.values(element)[0];
     const key = Object.keys(element)[0];
-    // console.log("keyArr\n\n"+JSON.stringify(key));
-    // console.log("frames\n\n"+JSON.stringify(frames[frIndex]));
-    // console.log(JSON.stringify(item)+"\n\n\nitem");
-    // const centerX = parseInt(item.left) + parseInt(item.width) / 2;
-    // const centerY = parseInt(item.top) + parseInt(item.height) / 2;
     return (
       <g
         key={item.id || i} // Ensure stable key for each shape
         transform={`translate(${parseInt(item.left)}, ${parseInt(item.top)})`}
         style={{
           cursor: draggingIndex === i ? "grabbing" : "grab",
-          // stroke: i === index ? "blue" : "none", // Blue stroke for selected
-          // strokeWidth: i === index ? "3px" : "0", // Visible stroke only when selected
-          // filter:
-          //   i === index ? "drop-shadow(0px 0px 5px blue)" : "none",
         }}
         onMouseDown={() => setDraggingIndex(i)}
-        onClick={() => {if (index !==i) setIndex(i);}}
+        onClick={() => {
+          setShowAnimations(true);
+          if (index !== i) setIndex(i);
+        }}
         onDoubleClick={() => {
           handleOpenForm(element, i);
         }}
@@ -288,7 +287,7 @@ export default function Canvas({width,height}:{width:string,height:string}) {
         {item.animation === "animateMotion" && (
           <path
             id={`motionPath-${i}`}
-            d="M 0,0 C 100,100 200,-100 300,0"
+            d={item.animationProperty.path}
             fill="transparent"
           />
         )}
@@ -304,10 +303,13 @@ export default function Canvas({width,height}:{width:string,height:string}) {
               <>
                 {item.animation === "animate" && (
                   <animate
-                    attributeName="fill"
-                    values={`${item.backgroundColor};#f56565;${item.backgroundColor}`}
-                    dur="2s"
-                    repeatCount="indefinite"
+                    attributeName={item.animationProperty.attribute}
+                    begin={item.animationProperty.begin}
+                    from={item.animationProperty.from || item.backgroundColor}
+                    to={item.animationProperty.to}
+                    dur={item.animationProperty.dur}
+                    repeatCount={item.animationProperty.repeatCount}
+                    fill="freeze"
                   />
                 )}
                 {item.animation === "animateTransform" && (
@@ -315,18 +317,33 @@ export default function Canvas({width,height}:{width:string,height:string}) {
                     attributeName="transform"
                     attributeType="XML"
                     type="rotate"
-                    from={`0 ${parseInt(item.width) / 2} ${
+                    from={`${item.animationProperty.fromDegree} ${
+                      item.animationProperty.fromOriginX ||
+                      parseInt(item.width) / 2
+                    } ${
+                      item.animationProperty.fromOriginY ||
                       parseInt(item.height) / 2
                     }`}
-                    to={`360 ${parseInt(item.width) / 2} ${
+                    to={`${item.animationProperty.toDegree} ${
+                      item.animationProperty.toOriginX ||
+                      parseInt(item.width) / 2
+                    } ${
+                      item.animationProperty.toOriginY ||
                       parseInt(item.height) / 2
                     }`}
-                    dur="2s"
-                    repeatCount="indefinite"
+                    dur={item.animationProperty.dur}
+                    repeatCount={item.animationProperty.repeatCount}
+                    begin={item.animationProperty.begin}
+                    fill="freeze"
                   />
                 )}
                 {item.animation === "animateMotion" && (
-                  <animateMotion dur="4s" repeatCount="indefinite">
+                  <animateMotion
+                    dur={item.animationProperty.dur}
+                    repeatCount={item.animationProperty.repeatCount}
+                    begin={item.animationProperty.begin}
+                    fill="freeze"
+                  >
                     <mpath xlinkHref={`#motionPath-${i}`} />
                   </animateMotion>
                 )}
@@ -351,10 +368,13 @@ export default function Canvas({width,height}:{width:string,height:string}) {
               <>
                 {item.animation === "animate" && (
                   <animate
-                    attributeName="fill"
-                    values={`${item.backgroundColor};#f56565;${item.backgroundColorl}`}
-                    dur="2s"
-                    repeatCount="indefinite"
+                    attributeName={item.animationProperty.attribute}
+                    begin={item.animationProperty.begin}
+                    from={item.animationProperty.from || item.backgroundColor}
+                    to={item.animationProperty.to}
+                    dur={item.animationProperty.dur}
+                    repeatCount={item.animationProperty.repeatCount}
+                    fill="freeze"
                   />
                 )}
                 {item.animation === "animateTransform" && (
@@ -362,18 +382,33 @@ export default function Canvas({width,height}:{width:string,height:string}) {
                     attributeName="transform"
                     attributeType="XML"
                     type="rotate"
-                    from={`0 ${parseInt(item.width) / 2} ${
+                    from={`${item.animationProperty.fromDegree} ${
+                      item.animationProperty.fromOriginX ||
+                      parseInt(item.width) / 2
+                    } ${
+                      item.animationProperty.fromOriginY ||
                       parseInt(item.height) / 2
                     }`}
-                    to={`360 ${parseInt(item.width) / 2} ${
+                    to={`${item.animationProperty.toDegree} ${
+                      item.animationProperty.toOriginX ||
+                      parseInt(item.width) / 2
+                    } ${
+                      item.animationProperty.toOriginY ||
                       parseInt(item.height) / 2
                     }`}
-                    dur="2s"
-                    repeatCount="indefinite"
+                    dur={item.animationProperty.dur}
+                    repeatCount={item.animationProperty.repeatCount}
+                    begin={item.animationProperty.begin}
+                    fill="freeze"
                   />
                 )}
                 {item.animation === "animateMotion" && (
-                  <animateMotion dur="4s" repeatCount="indefinite">
+                  <animateMotion
+                    dur={item.animationProperty.dur}
+                    repeatCount={item.animationProperty.repeatCount}
+                    begin={item.animationProperty.begin}
+                    fill="freeze"
+                  >
                     <mpath xlinkHref={`#motionPath-${i}`} />
                   </animateMotion>
                 )}

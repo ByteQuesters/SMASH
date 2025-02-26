@@ -4,11 +4,11 @@ import React, {useState } from "react";
 import { File, Shapes, Film, Upload } from "lucide-react";
 import ShapesPanel from "./shapes";
 import AnimationPanel from "./anime";
-import useStore, { framesState, frIndexState } from "../store";
+import useStore, { framesState, frIndexState, animePanelStore } from "../store";
 
 export default function Toolbar() {
   const [showShapes, setShowShapes] = useState(false);
-  const [showAnimations, setShowAnimations] = useState(false);
+  const {showAnimations, setShowAnimations} = animePanelStore();
   const {frames,setFrames} = useStore() as framesState;
   const {frIndex,setFrIndex} = useStore() as frIndexState;
 
@@ -39,7 +39,7 @@ export default function Toolbar() {
         <button
           className="flex flex-col items-center space-y-1"
           onClick={() => {
-            setShowAnimations((prev) => !prev);
+            setShowAnimations(!showAnimations);
             setShowShapes(false); 
           }}
         >

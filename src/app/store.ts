@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {create} from 'zustand';
 
 export type shapeState = {
@@ -92,6 +93,14 @@ export const formStore = create((set:any)=>({
   setShow: (state:boolean) => {set({show:state})},
   props: {},
   setProps: (state:Record<string,any>) => {set({props:state})},
-  // ind: 0,
-  // setInd: (state:number) => {set({index:state})}
 }))
+
+export type animePanelState = {
+  showAnimations: boolean;
+  setShowAnimations: (state: boolean) => void;
+}
+
+export const animePanelStore = create((set: any) => ({
+  showAnimations: false,
+  setShowAnimations: (state: boolean) => {set({ showAnimations: state })},
+}));
