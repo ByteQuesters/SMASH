@@ -3,16 +3,12 @@
 import Canvas from "../components/canvas";
 import CodeSpace from "../components/codespace";
 import Timeline from "../components/timeline";
-import { pageStore, formStore } from "../store";
-import { useEffect, useState } from "react";
-import PropertiesForm from "../components/PropertiesForm";
+import { pageStore } from "../store";
+import { useEffect } from "react";
 
 export default function Home() {
   const store = pageStore();
-  const { pageWidth, setPageWidth, pageHeight, setPageHeight } = store;
-
-  const [frames, setFrames] = useState<{ id: number; svg: string }[]>([]);
-  const { show, setShow } = formStore();
+  const { pageWidth, pageHeight } = store;
 
   useEffect(() => {
     console.log(pageWidth + " " + pageHeight);

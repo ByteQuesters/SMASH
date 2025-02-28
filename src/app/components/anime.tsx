@@ -1,16 +1,43 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import { useRef, useEffect, useState } from "react";
 import useStore, { framesState, frIndexState, indexState,  } from "../store";
 
-interface AnimationPanelProps {
+type AnimationPanelProps = {
   isVisible: boolean;
   onClose: () => void; 
 }
-
+export const AnimationPropertyMenu: Record<string, Record<string, string>> = {
+  animate: {
+    attribute: "fill",
+    from: "",
+    to: "red",
+    dur: "2s",
+    begin: "0s",
+    repeatCount: "indefinite",
+  },
+  animateTransform: {
+    fromDegree: "0",
+    fromOriginX: "",
+    fromOriginY: "",
+    toDegree: "360",
+    toOriginX: "",
+    toOriginY: "",
+    dur: "2s",
+    begin: "0s",
+    repeatCount: "indefinite",
+  },
+  animateMotion: {
+    path: "M 0,0 C 100,100 200,-100 300,0",
+    dur: "2s",
+    begin: "0s",
+    repeatCount: "indefinite"
+  },
+};
 export default function AnimationPanel({ isVisible, onClose }: AnimationPanelProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const { index, setIndex } = useStore() as indexState;
-  // const { items, setItems } = useStore() as itemState;
   const {frames,setFrames} = useStore() as framesState;
   const {frIndex,setFrIndex} = useStore() as frIndexState;
   const items = frames[frIndex];
@@ -20,7 +47,7 @@ export default function AnimationPanel({ isVisible, onClose }: AnimationPanelPro
     const animationUpdater = (item: any) => {
       const key = Object.keys(item)[0];
       const val = item[key];
-      const ret = { [key]: {...val, animation: type} };
+      const ret = { [key]: {...val, animation: type, animationProperty: AnimationPropertyMenu[type]} };
       // console.log(JSON.stringify(ret)+"\n\n\n\nWTK");
       return ret;
     };
@@ -78,19 +105,25 @@ export default function AnimationPanel({ isVisible, onClose }: AnimationPanelPro
           className="p-2 bg-gray-300 text-black rounded cursor-pointer hover:bg-gray-400"
           onClick={() => handleAnimation("animate")}
         >
-          animate
+          Attribute Change
         </li>
         <li
-          className="p-2 bg-gray-300 text-black rounded cursor-pointer hover:bg-gray-400"
+          className="p-2 bg-gray-300 text-black rounded cursor-pointer hover:bg-gray-400 capitalize"
           onClick={() => handleAnimation("animateTransform")}
         >
-          animateTransform
+          Rotate
         </li>
         <li
           className="p-2 bg-gray-300 text-black rounded cursor-pointer hover:bg-gray-400"
           onClick={() => handleAnimation("animateMotion")}
         >
-          animateMotion
+          Motion
+        </li>
+        <li
+          className="p-2 bg-red-300 text-black rounded cursor-pointer hover:bg-red-400"
+          onClick={() => handleAnimation("")}
+        >
+          Delete Animation
         </li>
       </ul>
     </div>

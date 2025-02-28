@@ -1,4 +1,3 @@
-import { Upload } from 'lucide-react';
 import {create} from 'zustand';
 
 export type shapeState = {
@@ -123,9 +122,9 @@ export default useStore;
 
 
 export const pageStore = create((set:any)=>({
-    pageWidth: "",
+    pageWidth: "500",
     setPageWidth: (state:string) => {set({pageWidth:state})},
-    pageHeight: "",
+    pageHeight: "500",
     setPageHeight: (state:string) => {set({pageHeight:state})},
 }))
 
@@ -134,6 +133,14 @@ export const formStore = create((set:any)=>({
   setShow: (state:boolean) => {set({show:state})},
   props: {},
   setProps: (state:Record<string,any>) => {set({props:state})},
-  ind: 0,
-  setInd: (state:number) => {set({index:state})}
 }))
+
+export type animePanelState = {
+  showAnimations: boolean;
+  setShowAnimations: (state: boolean) => void;
+}
+
+export const animePanelStore = create((set: any) => ({
+  showAnimations: false,
+  setShowAnimations: (state: boolean) => {set({ showAnimations: state })},
+}));

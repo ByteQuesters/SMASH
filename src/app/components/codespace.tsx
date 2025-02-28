@@ -19,7 +19,7 @@ export default function CodeSpace() {
   const { frames, setFrames } = useStore() as framesState;
   const { index } = useStore() as indexState;
   const { frIndex } = useStore() as frIndexState;
-  const { ind, setInd, setProps } = formStore();
+  // const { ind, setInd, setProps } = formStore();
   const [showExportOptions, setShowExportOptions] = useState(false);
   const [copy,setCopy] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);
@@ -158,9 +158,9 @@ export default function CodeSpace() {
             )}
 
             {showExportOptions && (
-              <div>
+              <div className="content-between flex flex-col gap-2">
                 <button
-                  className="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-800 w-full"
+                  className="bg-green-700 text-white px-4 py-2  rounded hover:bg-green-800 w-full"
                   onClick={handleExportSVG}
                 >
                   Export as SVG
