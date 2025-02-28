@@ -105,7 +105,7 @@ export default function AnimationPanel({ isVisible, onClose }: AnimationPanelPro
           className="p-2 bg-gray-300 text-black rounded cursor-pointer hover:bg-gray-400"
           onClick={() => handleAnimation("animate")}
         >
-          Attribute Change
+          Color Change
         </li>
         <li
           className="p-2 bg-gray-300 text-black rounded cursor-pointer hover:bg-gray-400 capitalize"

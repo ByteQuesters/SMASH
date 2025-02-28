@@ -198,9 +198,9 @@
           
             event.preventDefault();
             const itemsKey = frames[frIndex];
-            let items:any[] = []
-            for(let i of itemsKey){
-              items.push(Object.values(i)[0])
+            const items:any[] = []
+            for(const itr of itemsKey){
+              items.push(Object.values(itr)[0])
             }
             const x = event.clientX -X;
             const y = event.clientY-Y;
@@ -234,7 +234,7 @@
                 if(!shape) return;
                 // if(!properties) return;
                 let properties:any = {};
-                for(let itr of shapesJson["shapes"]){
+                for(const itr of shapesJson["shapes"]){
                   console.log(itr);
                   if(itr["name"]===shape){
                     properties = itr["properties"];
@@ -244,7 +244,7 @@
                 // console.log(`Click position: x = ${x}, y = ${y}`);
                 console.log("canva\n\n"+shape+"\n\n\n"+JSON.stringify(properties));
                 // const style: Record<string,string> = {shape:{...properties,"left":`${x-parseInt(properties.width)/2}px`,"top":`${y-parseInt(properties.height)/2}px`,"animation":""}};
-                let style: Record<string, string> = {};
+                const style: Record<string, string> = {};
                 style[shape] = {
                   ...properties,
                   left: `${x - parseInt(properties.width) / 2}px`,
@@ -377,7 +377,7 @@
 
       {frames[frIndex].map((element, i) => {
         const item:any = Object.values(element)[0];
-        let key = Object.keys(element)[0];
+        const key = Object.keys(element)[0];
         // console.log("keyArr\n\n"+JSON.stringify(key));
         // console.log("frames\n\n"+JSON.stringify(frames[frIndex]));
         console.log(JSON.stringify(item)+"\n\n\nitem");

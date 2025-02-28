@@ -5,6 +5,7 @@
 import { useState } from "react";
 import useStore, { formStore, framesState, frIndexState } from "../store";
 import { AnimationPropertyMenu } from "./anime";
+import {pageStore} from "../store";
 
 const PropertiesForm = () => {
   const { props, setProps } = formStore() as {
@@ -17,9 +18,10 @@ const PropertiesForm = () => {
   const { show, setShow } = formStore();
   const { frames, setFrames } = useStore() as framesState;
   const { frIndex, setFrIndex } = useStore() as frIndexState;
+  const { pageWidth, pageHeight } = pageStore();
   const animationOptions = [
     ["None", ""],
-    ["Attribute Change", "animate", []],
+    ["Color Change", "animate"],
     ["Rotate", "animateTransform"],
     ["Motion", "animateMotion"],
   ];
@@ -48,7 +50,7 @@ const PropertiesForm = () => {
     setFrames(tempFrames);
     setShow(false);
 
-    window.alert(JSON.stringify(props));
+    // window.alert(JSON.stringify(props));
 
   };
 
@@ -134,6 +136,63 @@ const PropertiesForm = () => {
                   className="border border-gray-300 bg-gray-100 text-gray-900 p-2 rounded-md focus:ring focus:ring-blue-400 w-full"
                   onChange={(e) =>
                     handleAnimationProp(`${e.target.value}s`, element[1])
+                  }
+                />
+              </div>
+            ))}
+          </div>
+        )}
+        {prop["animation"] === "animate" && (
+          <div>
+            {["from", "to"].map((element, index) => (
+              <div key={index} className="grid grid-cols-2 items-center gap-3">
+                <label className="text-sm font-semibold capitalize">
+                  {element}
+                </label>
+                <input
+                  type="color"
+                  value={element==="from" ? prop["backgroundColor"]: "red"}
+                  className="border border-gray-300 p-1 rounded-md focus:ring focus:ring-blue-400 w-full"
+                  onChange={(e) => handleAnimationProp(`${e.target.value}`, element)}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+        {prop["animation"] === "animateTransform" && (
+          <div>
+            {["fromDegree", "toDegree"].map((element, index) => (
+              <div key={index} className="grid grid-cols-2 items-center gap-3">
+                <label className="text-sm font-semibold capitalize">
+                  {element}
+                </label>
+                <input
+                  type="number"
+                  value={parseInt(prop["animationProperty"][element] as string)}
+                  min = {0}
+                  max = {360}
+                  className="border border-gray-300 bg-gray-100 text-gray-900 p-2 rounded-md focus:ring focus:ring-blue-400 w-full"
+                  onChange={(e) =>
+                    handleAnimationProp(e.target.value, element)
+                  }
+                />
+              </div>
+            ))}
+          </div>
+        )}
+        {prop["animation"] === "animateMotion" && (
+          <div>
+            {["path"].map((element, index) => (
+              <div key={index} className="grid grid-cols-2 items-center gap-3">
+                <label className="text-sm font-semibold capitalize">
+                  {element}
+                </label>
+                <input
+                  type="text"
+                  value={prop["animationProperty"][element]}
+                  className="border border-gray-300 bg-gray-100 text-gray-900 p-2 rounded-md focus:ring focus:ring-blue-400 w-full"
+                  onChange={(e) =>
+                    handleAnimationProp(e.target.value, element)
                   }
                 />
               </div>
