@@ -1,6 +1,7 @@
 import { useState, RefObject } from "react";
 import { useRouter } from "next/navigation";
 import CanvasDimensionsPopup from "./CanvasDimensionsPopup";
+import useStore,{uploadContentState} from "../store";
 
 interface FileUploadProps {
   svgPreview: string | null;
@@ -14,21 +15,23 @@ export default function FileUpload({ svgPreview, setSvgPreview, fileInputRef }: 
   const [width, setWidth] = useState(200);
   const [height, setHeight] = useState(200);
   const [isValid, setIsValid] = useState(true);
+  const {uploadContent,setUploadContent} = useStore() as uploadContentState;
   const router = useRouter();
 
   const handleProceed = () => {
     setShowModal(true); // Show dimension popup
   };
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file && file.type === "image/svg+xml") {
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type === 'image/svg+xml') {
       const reader = new FileReader();
-      reader.onload = () => {
-        setSvgPreview(reader.result as string);
-        setUploaded(true);
+      reader.onload = (event) => {
+        setUploadContent(event.target?.result as string);
       };
-      reader.readAsDataURL(file);
+      reader.readAsText(file);
+    } else {
+      alert('Please upload a valid SVG file.');
     }
   };
 

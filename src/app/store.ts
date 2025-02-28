@@ -1,3 +1,4 @@
+import { Upload } from 'lucide-react';
 import {create} from 'zustand';
 
 export type shapeState = {
@@ -48,6 +49,16 @@ export type heightState = {
   setPageHeight: (pageHeight: string) => void;
 };
 
+export type uploadContentState = {
+  uploadContent: Record<number, { svgCode: string; x: number; y: number }[]>; 
+  setUploadContent: (
+    frameIndex: number,
+    content: { svgCode: string; x: number; y: number },
+    indexToUpdate?: number
+  ) => void;
+};
+
+
 const useStore = create((set) => ({
   shape: "",
   setShape: (state: string) => {set({ shape: state });},
@@ -75,6 +86,37 @@ const useStore = create((set) => ({
   setSvgCode: (svg:any) => set({ svgCode: svg }),
   frIndex: 0,
   setFrIndex: (state:number) => set({frIndex:state}),
+
+  uploadContent: {} as Record<number, { svgCode: string; x: number; y: number }[]>,
+
+  setUploadContent: (
+    frameIndex: number,
+    content: { svgCode: string; x: number; y: number },
+    indexToUpdate?: number
+  ) =>
+    set((state: { uploadContent: Record<number, { svgCode: string; x: number; y: number }[]> }) => {
+      const existingFrameContent = state.uploadContent[frameIndex] || [];
+      const updatedFrameContent = [...existingFrameContent];
+
+      if (indexToUpdate !== undefined && updatedFrameContent[indexToUpdate]) {
+        // 🔄 Update existing item without adding a new one
+        updatedFrameContent[indexToUpdate] = content;
+      } else {
+        // ➕ Add new item if index not provided
+        updatedFrameContent.push(content);
+      }
+
+      return {
+        uploadContent: {
+          ...state.uploadContent,
+          [frameIndex]: updatedFrameContent,
+        },
+      };
+    }),
+   
+
+
+
 }));
 
 export default useStore;

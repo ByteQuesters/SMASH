@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState,useRef } from "react";
 import useStore, {
   svgCodeState,
   framesState,
@@ -8,6 +8,9 @@ import useStore, {
   formStore,
 } from "../store";
 import PropertiesForm from "./PropertiesForm";
+import html2canvas from "html2canvas";
+import GIF from "gif.js";
+// import Whammy from 'whammy';
 
 export default function CodeSpace() {
   const { svgCode } = useStore() as svgCodeState;
@@ -19,7 +22,8 @@ export default function CodeSpace() {
   const { ind, setInd, setProps } = formStore();
   const [showExportOptions, setShowExportOptions] = useState(false);
   const [copy,setCopy] = useState(false);
-
+  const previewRef = useRef<HTMLDivElement>(null);
+  const animationRef = useRef<HTMLDivElement>(null);
   const handleExportSVG = () => {
     const blob = new Blob([svgCode], { type: "image/svg+xml" });
     const url = URL.createObjectURL(blob);
@@ -38,10 +42,56 @@ export default function CodeSpace() {
     setShowExportOptions(true);
     console.log(showExportOptions);
   };
-  const handleExportGIF = () => {
-    console.log("Exporting animation as GIF...");
-    setShowExportOptions(false);
+  const handleExportGIF = async () => {
+    const gif = new GIF({
+      workers: 2,
+      quality: 10,
+      width: 500, // Adjust width
+      height: 500, // Adjust height
+    });
+  
+    const frames = animationRef.current?.querySelectorAll('svg') || [];
+  
+    // Collect frames from the animation
+    for (const frame of frames) {
+      await new Promise<void>((resolve) => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 500;
+        canvas.height = 500;
+        const ctx = canvas.getContext('2d');
+  
+        const svgData = new XMLSerializer().serializeToString(frame);
+        const img = new Image();
+        const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(svgBlob);
+  
+        img.onload = () => {
+          if (ctx) {
+            ctx.drawImage(img, 0, 0);
+          }
+          URL.revokeObjectURL(url);
+          gif.addFrame(canvas, { delay: 200, copy: true });
+          resolve(); // Wait for image to load before proceeding
+        };
+        img.src = url;
+      });
+    }
+  
+    // When GIF is finished rendering
+    gif.on('finished', (blob: Blob) => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'animation.gif';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+  
+    gif.render(); // Render the GIF
   };
+  
 
   const handleClearShape = () => {
     // const updatedItems = items.filter((_, i) => i !== index);

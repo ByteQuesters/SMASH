@@ -11,7 +11,10 @@
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.6",
     "@svgr/webpack": "^8.1.0",
+    "canvas2gif": "^1.0.1",
     "gif.js": "^0.2.0",
+    "gif.js.optimized": "^1.0.1",
+    "gifshot": "^0.4.5",
     "html2canvas": "^1.4.1",
     "lucide-react": "^0.475.0",
     "next": "15.1.7",
